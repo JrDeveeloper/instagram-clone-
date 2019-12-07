@@ -38,10 +38,8 @@ const AppTabContainet = createAppContainer(AppTabNavigator);
 export default class MainScreen extends Component {
 
     static navigationOptions = {
-        headerLeft:<Icon name='ios-camera' style={{ paddingLeft:10 }}/>,
-        title: 'Instagram',
-        headerRight:<Icon name='ios-send' style={{ paddingRight:10 }}/>,
-    } //순서대로 배정해야 빌드했을때 순서대로 서있는것(?)
+        header: null
+    }
 
     render() {
         return <AppTabContainet/>;

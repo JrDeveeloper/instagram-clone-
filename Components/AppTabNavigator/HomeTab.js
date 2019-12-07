@@ -1,16 +1,43 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import { Icon, Container, Content, Thumbnail } from 'native-base';
+import { Container, Content, Icon, Thumbnail, Header, Left, Right, Body } from 'native-base';
 import CardComponent from '../CardComponent';
 
 export default class HomeTab extends Component {
 
+    fetchFollowing(){
+        const data={
+            id:2,
+            jsonrpc:"2.0",
+            method:"call",
+            params:[
+                "follow_api",
+                "get_following",
+                ["gghite", "", "blog", 10]
+            ]
+        };
+        return fetch('https://api.steemit.com',
+        {
+            method : 'POST',
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(res => res.result.map(({following})=>following))
+    }
+
     state = {
-        feeds:[]
+        feeds:[],
+        followings:[]
     }
 
     componentWillMount(){
         this.fetchFeeds().then(feeds => {this.setState({feeds})});
+
+        this.fetchFollowing().then(followings => {
+            this.setState({
+                followings
+            })
+        });
     }
 
     fetchFeeds(){
@@ -42,6 +69,11 @@ export default class HomeTab extends Component {
     render(){
         return(
             <Container style={style.container}>
+                <Header>
+                    <Left><Icon name='ios-camera' style={{ paddingLeft:10 }}/></Left>
+                    <Body><Text style={{fontWeight:'bold'}}>Instagram</Text></Body>
+                    <Right><Icon name='ios-send' style={{ paddingRight:10 }}/></Right>
+                </Header>
                 <Content>
                     {}
                     <View style={{height:100}}>
@@ -56,11 +88,18 @@ export default class HomeTab extends Component {
 
                     <View style={{ flex:3 }}>
                         <ScrollView
-                        horizontal={true}>
-                            <Thumbnail source = {{ uri : 'https://pbs.twimg.com/media/EKTjMOpUUAErTbx.jpg' }}/>
-                            <Thumbnail source = {{ uri : 'https://pbs.twimg.com/media/EKSil1kU8AUgz4f.jpg' }}/>
-                            <Thumbnail source = {{ uri : 'https://pbs.twimg.com/media/Ejv0NkHVUAAcBmW.jpg' }}/>
-                            <Thumbnail source = {{ uri : 'https://pbs.twimg.com/media/Ejv0NkKVAAEJzSf.jpg' }}/>
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{
+                            alignItems:'center',
+                            paddingStart:5,
+                            paddingEnd:5
+                        }}>
+                            {
+                                this.state.followings.map(following=> <Thumbnail
+                                    style={{ marginHorizontal:5, borderColor:'pink', borderWidth:2}}
+                                    source={{uri:`https://steemitimages.com/u/${following}/avatar`}}/>)
+                            }
                         </ScrollView>
                     </View>
                 </View>
